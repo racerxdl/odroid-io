@@ -1,10 +1,32 @@
 {
   "name": "odroid-io",
   "version": "1.0.0",
-  "description": "Odroid C2 I/O Plugin for Jonnhy-Five",
-  "main": "index.js",
+  "description": "Odroid C2 I/O Plugin for Jonnhy-Five based on linux-io",
+  "main": "lib/linux-io.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "board-io": "^3.0.5",
+    "i2c-bus": "^4.0.2",
+    "mutexify": "^1.2.0",
+    "onoff": "^3.2.2"
+  },
+  "directories": {
+    "example": "example"
+  },
+  "keywords": [
+    "linux",
+    "johnny-five",
+    "odroid",
+    "hardkernel"
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/racerxdl/odroid-io.git"
   },
   "author": "Lucas Teske",
   "license": "MIT"
