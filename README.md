@@ -1,6 +1,6 @@
-# Linux-IO
+# ODROID-IO
 
-Linux-IO is an extensible Linux
+ODROID-IO is a Johnny-Five I/O Plugin for Odroid C2
 [IO Plugin](https://github.com/rwaldron/io-plugins) for
 [Johnny-Five](https://github.com/rwaldron/johnny-five). It extends
 [board-io](https://github.com/achingbrain/board-io) to provide Linux
@@ -10,20 +10,11 @@ implementations for the following features that IO Plugins can support:
    * Implementation based on the [GPIO sysfs interface](https://www.kernel.org/doc/Documentation/gpio/sysfs.txt) using [onoff](https://github.com/fivdi/onoff)
  * I2C
    * Implementation based on the [/dev interface](https://www.kernel.org/doc/Documentation/i2c/dev-interface) using [i2c-bus](https://github.com/fivdi/i2c-bus)
- * Built-in LEDs
-   * Implementation based on the [LED sysfs interface](https://www.kernel.org/doc/Documentation/leds/leds-class.txt) using [led.js](https://github.com/fivdi/linux-io/blob/master/lib/led.js)
-
-The initial motivation for implementing Linux-IO was to provide Linux
-implementations of the I2C methods that Johnny-Five IO Plugins are required to
-implement. Over the course of the last two years I was involved in adding I2C
-functionality to a number of IO Plugins. In reality, more or less the same
-code was added to each IO Plugin. The goal of Linux-IO is to make such code
-reusable across Linux IO Plugins.
 
 ## Installation
 
 ```
-npm install linux-io
+npm install odroid-io
 ```
 
 ## Johnny-Five Features Supported
@@ -34,7 +25,7 @@ features supported by Linux-IO shown in the following table:
 
 Feature | Support
 :--- | :---
-Analog Read | no
+Analog Read | yes
 Digital Read | yes
 Digital Write | yes
 PWM | no
@@ -54,68 +45,30 @@ that allows digital IO on GPIO4 and GPIO17 and I2C serial bus access on I2C
 bus 1. The built-in LED can also be used.
 
 ```js
-var LinuxIO = require('linux-io'),
-  util = require('util');
+'use strict';
 
-function TinyRaspberryPiIO() {
-  if (!(this instanceof TinyRaspberryPiIO)) {
-    return new TinyRaspberryPiIO();
-  }
-
-  LinuxIO.call(this, {
-    pins: [{
-      ids: ['P1-7', 'GPIO4'],
-      gpioNo: 4,
-      modes: [0, 1]
-    }, {
-      ids: ['P1-11', 'GPIO17'],
-      gpioNo: 17,
-      modes: [0, 1]
-    }, {
-      ids: ['LED0'],
-      ledPath: '/sys/class/leds/led0',
-      modes: [1]
-    }],
-    defaultI2cBus: 1,
-    defaultLed: 'LED0'
-  });
-
-  setImmediate(function () {
-    this.emit('connect');
-    this.emit('ready');
-  }.bind(this));
-}
-util.inherits(TinyRaspberryPiIO, LinuxIO);
-
-module.exports = TinyRaspberryPiIO;
-```
-
-If a button is connected to GPIO4 and an LED is connected to GPIO17, the
-following
-[program](https://github.com/fivdi/linux-io/blob/master/example/raspberry-pi/led-button.js)
-will turn the LED on when the button is pressed and turn
-the LED off when the button is released.
-
-```js
 var five = require('johnny-five');
-var TinyRaspberryPiIO = require('./tiny-raspberry-pi-io');
+var OdroidIO = require('./odroid-io');
 
 var board = new five.Board({
-  io: new TinyRaspberryPiIO()
+  io: new OdroidIO()
 });
 
 board.on('ready', function() {
-  var led = new five.Led('GPIO17');
-  var button = new five.Button('GPIO4');
-
-  button.on('down', function() {
-    led.on();
+  console.log('Board Ready');
+  var adc = new five.Pin({
+  pin: 'A0',
+  type: 'analog',
   });
-
-  button.on('up', function() {
-    led.off();
+  adc.read(function(err, val) {
+  if (err) {
+    console.log('Error reading ADC: ', err);
+  } else {
+    console.log('ADC Value: ' + val);
+  }
   });
 });
+
 ```
 
 If an ADXL345 accelerometer is connected to I2C bus 1, the following
@@ -124,10 +77,10 @@ will print information provided by accelerometer.
 
 ```js
 var five = require('johnny-five');
-var TinyRaspberryPiIO = require('./tiny-raspberry-pi-io');
+var OdroidIO = require('odroid-io');
 
 var board = new five.Board({
-  io: new TinyRaspberryPiIO()
+  io: new OdroidIO()
 });
 
 board.on('ready', function() {
@@ -149,17 +102,3 @@ board.on('ready', function() {
   });
 });
 ```
-
-## Examples
-
-Additional examples for the Raspberry Pi, BeagleBone Black and C.H.I.P can be
-found in the
-[example directory](https://github.com/fivdi/linux-io/tree/master/example).
-
-## IO Plugins Based On Linux-IO
-
-- BeagleBone Black
-  - [BeagleBone-IO](https://github.com/julianduque/beaglebone-io)
-- Raspberry Pi
-  - [Pi-IO](https://github.com/fivdi/pi-io)
-
