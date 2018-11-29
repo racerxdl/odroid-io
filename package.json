@@ -1,6 +1,6 @@
 {
   "name": "odroid-io",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Odroid C2 I/O Plugin for Jonnhy-Five based on linux-io",
   "main": "lib/odroid-io.js",
   "scripts": {
