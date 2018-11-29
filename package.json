@@ -1,0 +1,11 @@
+{
+  "name": "odroid-io",
+  "version": "1.0.0",
+  "description": "Odroid C2 I/O Plugin for Jonnhy-Five",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lucas Teske",
+  "license": "MIT"
+}
